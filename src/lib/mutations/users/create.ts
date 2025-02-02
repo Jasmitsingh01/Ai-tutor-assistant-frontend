@@ -1,7 +1,7 @@
 import { useMutation } from "@tanstack/react-query";
 import { user } from "../../api";
 import { AxiosError } from "axios";
-import {  toast } from 'react-toastify';
+// import {  toast } from 'react-toastify';
 
 const CreateUser = () => {
     const mutation = useMutation({
@@ -18,6 +18,8 @@ const CreateUser = () => {
 
         },
         onError:(error:AxiosError)=>{
+
+            console.log(error)
         }
     })
 
