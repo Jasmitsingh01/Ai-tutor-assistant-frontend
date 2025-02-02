@@ -1,4 +1,3 @@
-import React from 'react'
 
 const UserResponse = ({question}:{question:string}) => {
   return (

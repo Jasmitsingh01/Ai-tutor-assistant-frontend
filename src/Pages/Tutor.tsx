@@ -1,15 +1,15 @@
 import { IoIosSend } from "react-icons/io";
 import {motion} from 'motion/react'
 import { useForm } from "react-hook-form";
-import { useState } from "react";
-interface UserResponse{
+// import { useState } from "react";
+// interface UserResponse{
   
-    role:string,
-    parts:[string]
+//     role:string,
+//     parts:[string]
   
-}
+// }
 const Tutor = () => {
-  const [ userResponse,setUserResponse]=useState<Array<UserResponse>| undefined>()
+  // const [ userResponse,setUserResponse]=useState<Array<UserResponse>| undefined>()
   const { register}=useForm({
     defaultValues:{
       question:""
