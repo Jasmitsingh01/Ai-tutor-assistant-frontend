@@ -69,7 +69,7 @@ const Index = () => {
        
         className="bg-blue-500 transition delay-150 duration-300 ease-in-out hover:-translate-y-1 hover:scale-110 hover:bg-indigo-500 mx-auto block p-2.5 text-white font-semibold rounded-md"
       >
-        Continue to App
+       <a href="/ask"> Continue to App</a>
       </motion.button>
     </main>
   );

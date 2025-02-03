@@ -1,7 +1,6 @@
 import { useMutation } from "@tanstack/react-query";
 import { user } from "../../api";
-import { AxiosError } from "axios";
-// import {  toast } from 'react-toastify';
+import {  toast } from 'react-toastify';
 
 const CreateUser = () => {
     const mutation = useMutation({
@@ -15,11 +14,11 @@ const CreateUser = () => {
         },
         mutationKey:['user'],
         onSuccess:()=>{
+            toast.success('user created successfully')
 
         },
-        onError:(error:AxiosError)=>{
-
-            console.log(error)
+        onError:()=>{
+           toast.error("failed to create user")
         }
     })
 
