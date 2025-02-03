@@ -1,5 +1,7 @@
 import { motion } from "motion/react";
+import { useNavigate } from "react-router-dom";
 const Index = () => {
+  const naviagte=useNavigate()
   return (
     <main className="p-24">
       <h1 className=" text-5xl font-bold text-center mb-10">
@@ -66,10 +68,10 @@ const Index = () => {
         whileInView={{
             scale:1
         }}
-       
+       onClick={()=>naviagte('/ask')}
         className="bg-blue-500 transition delay-150 duration-300 ease-in-out hover:-translate-y-1 hover:scale-110 hover:bg-indigo-500 mx-auto block p-2.5 text-white font-semibold rounded-md"
       >
-       <a href="/ask"> Continue to App</a>
+        Continue to App
       </motion.button>
     </main>
   );
