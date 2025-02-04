@@ -31,8 +31,8 @@ const BotResponse = ({ question, message }: { question?: Question[]; message: st
     <div className="flex flex-col gap-5 self-start">
       <div className="self-start">
         <img
-          className="w-[45px] h-[45px] object-cover object-center rounded-full"
-          src="https://img.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg?t=st=1738492598~exp=1738496198~hmac=7e1179dea01be2a24fd469917fac6899a6ab2958a4bf2465ece6eba39819e665&w=740"
+          className="w-[45px] h-[45px] object-contain object-center rounded-full"
+          src="https://i0.wp.com/junilearning.com/wp-content/uploads/2020/06/python-programming-language.webp?fit=800%2C800&ssl=1"
           alt="bot-profile-image"
         />
       </div>
@@ -60,7 +60,7 @@ const BotResponse = ({ question, message }: { question?: Question[]; message: st
             }
           })
         ) : (
-          <p>No questions available.</p>
+          ""
         )}
       </div>
     </div>
