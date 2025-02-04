@@ -17,7 +17,8 @@ interface Message {
   parts: string[];
 }
 
-interface Question {  // Corrected interface name to singular Question
+interface Question {
+  // Corrected interface name to singular Question
   type: string;
   question: string;
   option?: object;
@@ -35,7 +36,12 @@ const Tutor = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [questions, setQuestions] = useState<Question[][]>([[]]); // Corrected state name to questions
   const { mutate, data, isError, error, isPending } = ChatMutation();
-  const { register, handleSubmit, reset, formState: { errors } } = useForm<Chat>({
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<Chat>({
     resolver: zodResolver(chatSchema),
   });
   const chatContainerRef = useRef<HTMLDivElement>(null);
@@ -45,10 +51,7 @@ const Tutor = () => {
 
     if (trimmedQuestion === "") return;
 
-    setMessages([
-      ...messages,
-      { role: "user", parts: [trimmedQuestion] },
-    ]);
+    setMessages([...messages, { role: "user", parts: [trimmedQuestion] }]);
 
     mutate({ question: trimmedQuestion });
     reset();
@@ -57,49 +60,86 @@ const Tutor = () => {
   useEffect(() => {
     if (data && data.response) {
       try {
-        const parts = data.response.split('json');
+        const parts = data.response.split("json");
         const messagePart = parts[0].trim();
 
         setMessages([...messages, { role: "bot", parts: [messagePart] }]);
 
-        const questionsPart = parts[1]?.replace(/```/g, '')?.replace(/\n/g, '')?.trim();
-        const parsedQuestions: Question[] = questionsPart ? JSON.parse(questionsPart) : [];
+        let questionsPartString = parts[1]
+          ?.split("```")?.[0]
+          ?.replace(/\n/g, "");
+        let questionsPart;
+       
+        try {
+          questionsPart = JSON.parse(questionsPartString); // Try parsing directly
+        } catch (e1) {
+  
+          if (
+            !questionsPartString.startsWith("[") ||
+            !questionsPartString.endsWith("]")
+          ) {
+            questionsPartString = `[${questionsPartString}]`; // Add brackets if missing
+          }
 
-        setQuestions((prevQuestions) => [...prevQuestions, parsedQuestions]); // Add to existing questions
+          try {
+            questionsPart = JSON.parse(questionsPartString); // Try parsing again with brackets
+          } catch (e2) {
+            console.error("JSON Parse failed:", e2);
+            questionsPart = []; // Handle parse failure (e.g., set to empty array)
+          }
+        }
 
+        const parsedQuestions: Question[] = questionsPart;
+        setQuestions((prevQuestions) => [...prevQuestions, parsedQuestions]);
       } catch (error) {
-        console.error("Error parsing JSON or processing response:", error);
-        setQuestions([[]]); // Reset questions on error
+        console.error("Error processing or parsing JSON:", error);
+        setQuestions([...questions, []]); // Reset questions on error
       }
     }
-  }, [data?.response, messages]); // Added messages to dependency array
-
+  }, [data?.response]); // Added messages to dependency array
 
   useEffect(() => {
     if (isError) {
       console.error("API Error:", error);
       setMessages([
         ...messages,
-        { role: "bot", parts: ["Error: Could not get a response. Please try again later."] },
+        {
+          role: "bot",
+          parts: ["Error: Could not get a response. Please try again later."],
+        },
       ]);
     }
   }, [isError, error, messages]); // Added messages to dependency array
-
+  
   return (
     <div className="flex flex-col justify-between w-full h-full">
       <div
         ref={chatContainerRef}
         className="border-2 rounded-md flex flex-col p-5 gap-10 overflow-x-hidden overflow-y-auto h-[calc(100vh-200px)] mb-4"
       >
-        {messages.map((message, index) => (
-          <div key={index} className="flex flex-col w-full">
-            {message.role === "user" ? (
-              <UserResponse question={message.parts.join("").replace(/^[a-z]/, (m) => m.toUpperCase())} />
-            ) : (
-              <BotResponse question={questions[index] || []} message={message.parts.join("").replace(/^[a-z]/, (m) => m.toUpperCase())} /> // Provide default empty array
-            )}
-          </div>
-        ))}
+        {messages.map((message, index) => {
+          if (message.role === "user") {
+            return (
+              <div key={index} className="flex flex-col w-full">
+                <UserResponse
+                  question={message.parts
+                    .join("")
+                    .replace(/^[a-z]/, (m) => m.toUpperCase())}
+                />
+              </div>
+            );
+          } else {
+            return (
+              <div key={index} className="flex flex-col w-full">
+                <BotResponse
+                  question={questions[index ] || []}
+                  message={message.parts
+                    .join("")
+                    .replace(/^[a-z]/, (m) => m.toUpperCase())}
+                />              </div>
+            );
+          }
+        })}
 
         {isPending && (
           <div className="flex flex-col w-full gap-5 self-start p-4">
@@ -119,16 +159,25 @@ const Tutor = () => {
           </div>
         )}
 
-        {isError && <div className="text-red-500">API Error. Please try again.</div>}
+        {isError && (
+          <div className="text-red-500">API Error. Please try again.</div>
+        )}
       </div>
 
-      <form className="flex items-center place-items-end" onSubmit={handleSubmit(onSubmit)}>
+      <form
+        className="flex items-center place-items-end"
+        onSubmit={handleSubmit(onSubmit)}
+      >
         <textarea
           {...register("question", { required: true })}
           placeholder="Start Typing .... "
-          className={`resize-none outline-none border-2 scrollbar-hide overflow-auto w-full p-2 pr-14 rounded-md ${errors.question ? 'border-red-500' : ''}`}
+          className={`resize-none outline-none border-2 scrollbar-hide overflow-auto w-full p-2 pr-14 rounded-md ${
+            errors.question ? "border-red-500" : ""
+          }`}
         />
-        {errors.question && <p className="text-red-500">{errors.question.message}</p>}
+        {errors.question && (
+          <p className="text-red-500">{errors.question.message}</p>
+        )}
 
         <motion.button
           whileTap={{ scale: 0.8 }}

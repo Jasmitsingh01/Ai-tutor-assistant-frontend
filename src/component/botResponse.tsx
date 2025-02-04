@@ -26,7 +26,7 @@ const BotResponse = ({ question, message }: { question?: Question[]; message: st
       setQuestionsToRender(null)
     }
   }, [question]); 
-  console.log(question)
+  
   return (
     <div className="flex flex-col gap-5 self-start">
       <div className="self-start">
