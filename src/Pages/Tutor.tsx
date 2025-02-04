@@ -31,7 +31,7 @@ const chatSchema = z.object({ // Corrected typo: chatShema to chatSchema
 
 const Tutor = () => {
   const [messages, setMessages] = useState<Message[]>([]);
-  const [question,setQuestion]=useState<questions[]>([]);
+  const [question,setQuestion]=useState<questions[][]>([]);
   const { mutate, data, isError, error,isPending } = ChatMutation(); // Added isError and error
   const { register, handleSubmit, reset, formState: { errors } } = useForm<Chat>({
     resolver: zodResolver(chatSchema),
@@ -59,7 +59,7 @@ const Tutor = () => {
             const questions = questionsPart ? JSON.parse(questionsPart) : []; // Parse or default to empty array
 
             // Wrap the questions in an array of arrays.
-            setQuestion([...questions]); // Important: Make it an array of arrays
+            setQuestion([...question,questions]); // Important: Make it an array of arrays
 
         } catch (error) {
             console.error("Error parsing JSON or processing response:", error);
@@ -97,7 +97,7 @@ const Tutor = () => {
             {message.role === "user" ? (
               <UserResponse question={message.parts.join("").replace(/^[a-z]/, function(m){ return m.toUpperCase() })} />
             ) : (
-              <BotResponse question={question} message={message.parts.join("").replace(/^[a-z]/, function(m){ return m.toUpperCase() })} />
+              <BotResponse question={question[index]} message={message.parts.join("").replace(/^[a-z]/, function(m){ return m.toUpperCase() })} />
             )
              
             
