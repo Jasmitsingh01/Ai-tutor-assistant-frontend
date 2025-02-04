@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import Draggable, { DraggableEvent } from "react-draggable";
 
 interface FillInTheBlankProps {
   text: string;
@@ -8,26 +7,11 @@ interface FillInTheBlankProps {
 
 const FillInTheBlank: React.FC<FillInTheBlankProps> = ({ text, answer }) => {
   const [userAnswer, setUserAnswer] = useState<string | null>(null); // Single answer state
-
+  console.log(answer)
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setUserAnswer(event.target.value);
   };
 
-  const handleOnDrop = (event: DraggableEvent, droppedAnswer: string) => {
-    event;
-    setUserAnswer(droppedAnswer);
-  };
-
-  const handleDrag = (
-    event: DraggableEvent,
-    ui: any,
-    droppedAnswer: string
-  ) => {
-    // No need to track positions if there is only one answer. You can remove this if you want.
-    event;
-    droppedAnswer;
-    ui;
-  };
 
   const isCorrect = userAnswer?.toLowerCase() === answer.toLowerCase(); // Correctness check
 
@@ -55,14 +39,7 @@ const FillInTheBlank: React.FC<FillInTheBlankProps> = ({ text, answer }) => {
         })}
       </p>
 
-      <div className="draggable-answers flex flex-wrap gap-2">
-        <Draggable
-          onStop={(event: DraggableEvent) => handleOnDrop(event, answer)}
-          onDrag={(event: DraggableEvent, ui) => handleDrag(event, ui, answer)}
-        >
-          <div className="border rounded px-2 py-1 cursor-grab">{answer}</div>
-        </Draggable>
-      </div>
+     
 
       <p
         className={`mt-4 font-medium ${

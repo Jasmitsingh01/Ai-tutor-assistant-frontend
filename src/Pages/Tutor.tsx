@@ -47,72 +47,27 @@ const Tutor = () => {
     mutate({ question: data.question.trim() }); // Trim question sent to the API
     reset();
   };
-
   useEffect(() => {
-    if (data && data.history) {
-      data.history.forEach((item: { role: string; parts: string[] }) => {
-        if (item.role === "model") {
-          item.parts.forEach(part => {
-            try {
-              const parsedResponse = JSON.parse(part || "{}");
+    if (data && data.response) {
+        try {
+            const parts = data.response.split('json'); // Split the response
 
-              let botResponse = "";
+            const messagePart = parts[0].trim(); // Extract message and trim whitespace
+            setMessages([...messages, { role: "bot", parts: [messagePart] }]);
 
-              if (typeof parsedResponse === 'object' && parsedResponse !== null) {
-                for (const key in parsedResponse) {
-                  if (parsedResponse.hasOwnProperty(key)) {
-                    if (!key.includes("question")) { // Exclude questions here
-                      botResponse += `${key}:\n`;
+            const questionsPart = parts[1]?.replace(/```/g, '')?.replace(/\n/g, '')?.trim(); // Extract questions and clean up
+            const questions = questionsPart ? JSON.parse(questionsPart) : []; // Parse or default to empty array
 
-                      if (Array.isArray(parsedResponse[key])) {
-                        parsedResponse[key].forEach(arrayItem => {
-                          let itemText = "";
+            // Wrap the questions in an array of arrays.
+            setQuestion([...questions]); // Important: Make it an array of arrays
 
-                          if (typeof arrayItem === "object" && arrayItem !== null) {
-                            for (const iKey in arrayItem) {
-                              itemText += `${iKey}: ${arrayItem[iKey]}\n`;
-                            }
-                          } else {
-                            itemText = arrayItem ? arrayItem.toString() : "";
-                          }
-
-                          botResponse += `${itemText}\n`;
-                        });
-                      } else if (typeof parsedResponse[key] === 'object' && typeof parsedResponse[key] !== null) {
-                        for (const iKey in parsedResponse[key]) {
-                          botResponse += `${iKey}: ${parsedResponse[key][iKey]}\n`;
-                        }
-                      } else {
-                        botResponse += `${parsedResponse[key] ? parsedResponse[key].toString() : ""}\n`;
-                      }
-                    } else { // Handle questions separately
-                      setQuestion( [
-                       
-                        ...parsedResponse[key] // Spread questions into state
-                      ]);
-                    }
-                  }
-                }
-              } else if (typeof parsedResponse === 'string') {
-                botResponse = parsedResponse;
-              } else {
-                botResponse = JSON.stringify(parsedResponse);
-              }
-
-              setMessages(prevMessages => [
-                ...prevMessages,
-                { role: "bot", parts: [botResponse.trim()] }
-              ]);
-
-            } catch (parseError) {
-              console.error("Error parsing JSON:", parseError, part);
-              setMessages(prevMessages => [...prevMessages, { role: "bot", parts: ["Error parsing response."] }]);
-            }
-          });
+        } catch (error) {
+            console.error("Error parsing JSON or processing response:", error);
+            // Handle the error appropriately, e.g., display an error message
+            setQuestion([]); // Set an empty array of arrays to avoid further errors
         }
-      });
     }
-  }, [data?.history]);
+}, [data?.response]);
 
 
 
@@ -129,7 +84,6 @@ const Tutor = () => {
       ]);
     }
   }, [isError, error, messages]);
-console.log(question)
   return (
     <div className="flex flex-col justify-between w-full h-full">
       <div
@@ -138,7 +92,7 @@ console.log(question)
       >
    
 {
-        messages.map((message, index) => (
+        messages?.map((message, index) => (
           <div key={index} className=" flex flex-col w-full">
             {message.role === "user" ? (
               <UserResponse question={message.parts.join("").replace(/^[a-z]/, function(m){ return m.toUpperCase() })} />

@@ -2,7 +2,7 @@ import React, { useState, useRef } from "react";
 import Draggable, { DraggableEvent } from "react-draggable";
 
 interface MCQProps {
-  options: string[];
+  options?: string[];
   question: string;
   correctAnswer: string;
 }
@@ -27,7 +27,7 @@ const MCQ: React.FC<MCQProps> = ({ options, question, correctAnswer }) => {
         {" "}
         {/* Relative for bounds */}
         <ul className="flex flex-col gap-3 capitalize ">
-          {options.map((option, index) => {
+          {options?.map((option, index) => {
             const [position, setPosition] = useState({ x: 0, y: 0 });
             const draggableRef = useRef<HTMLDivElement>(null);
 
