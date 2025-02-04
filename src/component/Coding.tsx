@@ -46,8 +46,7 @@ const PythonCodingQuestion: React.FC<CodingQuestionProps> = ({ question, starter
             // 2. Normalize and compare:
             const normalizedUserOutput = JSON.parse(outputLines.join(''));
             const normalizedExpectedOutput = expectedOutput.trim();
-            console.log(normalizedExpectedOutput,normalizedUserOutput)
-            console.log(isEqual(normalizedExpectedOutput,normalizedUserOutput))
+
             setIsCorrect(isEqual(normalizedExpectedOutput,normalizedUserOutput));
           } catch (e) {
             console.error("Error processing output:", e);

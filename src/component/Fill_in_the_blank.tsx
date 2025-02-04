@@ -7,7 +7,6 @@ interface FillInTheBlankProps {
 
 const FillInTheBlank: React.FC<FillInTheBlankProps> = ({ text, answer }) => {
   const [userAnswer, setUserAnswer] = useState<string | null>(null); // Single answer state
-  console.log(answer)
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setUserAnswer(event.target.value);
   };
