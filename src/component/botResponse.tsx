@@ -50,7 +50,7 @@ const BotResponse = ({ question, message }: { question?: Question[]; message: st
         {  questionsToRender && questionsToRender?.length > 0 ? (
           questionsToRender?.map((q, index) => {
             if(q.type =="MCQ"){
-              return <div key={index}> <MCQ question={q.question}  correctAnswer={q?.answer || ''} options={Object.values(q?.options || {})}/></div>
+              return <div key={index}> <MCQ question={q.question}  correctAnswer={q?.options?.[`${q?.answer}`] || ''} options={Object.values(q?.options || {})}/></div>
             }
             if(q.type =="Fill in the Blank"){
               return <div key={index}> <FillInTheBlank text={q.question}  answer={q?.answer || ''} /></div>
